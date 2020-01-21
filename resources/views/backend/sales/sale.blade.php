@@ -170,12 +170,13 @@
         el: '#app',
         data : {
             info: [],
-            search: ''
+            search: '',
+            stockid: ''
         },
         methods : {
             addproduct(id) 
             {
-                alert(id);
+                this.stockid=id;
             }
         },
         mounted () {
