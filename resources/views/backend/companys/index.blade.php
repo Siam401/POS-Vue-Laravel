@@ -1,0 +1,69 @@
+@extends('backend.layouts.master')
+@section('css')
+    <link href="{{asset('ui/backend/plugins/datatables/css/jquery.datatables.min.css')}}" rel="stylesheet">
+    <link href="{{asset('ui/backend/plugins/datatables/css/jquery.datatables_themeroller.css')}}" rel="stylesheet">
+@endsection
+
+@section('content')
+<div class="page-inner">
+
+        <div class="page-title">
+            <h3 class="breadcrumb-header">Companys</h3>
+        </div>
+        <div id="main-wrapper">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-white">
+                        <div class="panel-body">
+                            @if(Session::has('message'))
+                            <p class="alert {{ Session::get('alert-class', 'alert-info') }}">{{ Session::get('message') }}</p>
+                            @endif
+                            <div class="table-responsive">
+                                    <table id="example" class="display table table-data-width">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Phone</th>
+                                                    <th>Address</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Phone</th>
+                                                    <th>Address</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+                                                @foreach ($companys as $company)
+                                                    <tr>
+                                                        <td>{{ $company->name }}</td>
+                                                        <td>{{ $company->phone }}</td>
+                                                        <td>{{ $company->address }}</td>
+                                                        <td>
+                                                        <a href="#" type="button" class="btn btn-info btn-rounded">Update</a>
+                                                        <button type="submit" class="btn btn-danger btn-rounded">Delete</button>   
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                           </table>  
+                                           </table>  
+                            </div>    
+                        </div>    
+                    </div>    
+                </div>
+            </div><!-- Row -->
+        </div><!-- Main Wrapper -->
+
+        
+    </div><!-- /Page Inner -->
+
+@endsection
+
+@section('script')
+<script src="{{asset('ui/backend/plugins/datatables/js/jquery.datatables.min.js')}}"></script>    
+<script src="{{asset('ui/backend/js/pages/table-data.js')}}"></script>    
+@endsection
