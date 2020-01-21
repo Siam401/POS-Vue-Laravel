@@ -18,14 +18,13 @@
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <input type="text" class="form-control" placeholder="Search item">
+                                    <input type="text" v-model="search" class="form-control" placeholder="Search item">
                                 </div>
                             </div>
                         </div>    
                     </div>    
                     <div class="panel panel-white">
                         <div class="panel-body">
-                            <div id="intro">@{{ message }}</div>
                             <div class="row">
                                 <div class="col-md-12">
                                     <table class="table table-borderless  mt-1">
@@ -167,23 +166,31 @@
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script>
     const url = "http://localhost:8000/stocks";
-    const axios = require('axios');
     new Vue({
         el: '#app',
         data : {
-            info: null,
-            message: 'siam',
+            info: [],
+            search: ''
         },
         methods : {
             addproduct(id) 
             {
-            this.show=id;
+                alert(id);
             }
         },
         mounted () {
-            axios.get('http://localhost:8000/stocks')
-                .then(response => (this.info = response.data),console.log(response);)
-        }
+            axios.get(url).then(response => {
+                this.info = response.data
+            })
+            
+        },
+        computed: {
+            filteredList() {
+            return this.info.filter(data => {
+                return data.name.toLowerCase().includes(this.search.toLowerCase())
+                    })
+                }
+            }
     });
     // new Vue({
     //         el: '#app',
