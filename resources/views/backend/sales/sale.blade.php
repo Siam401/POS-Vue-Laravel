@@ -36,7 +36,7 @@
                                                     <th width="15%"></th>
                                                 </tr>
                                             </thead>
-                                            <tr v-for="data in info">
+                                            <tr v-for="data in stocks">
                                                 <td>@{{ data.name }}</td>
                                                 <td>@{{ data.sellprice }}</td>
                                                 <td>@{{ data.quantity }}</td>
@@ -185,7 +185,7 @@
             
         },
         computed: {
-            filteredList() {
+            stocks() {
             return this.info.filter(data => {
                 return data.name.toLowerCase().includes(this.search.toLowerCase())
                     })
