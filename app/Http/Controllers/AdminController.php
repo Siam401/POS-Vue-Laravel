@@ -39,7 +39,9 @@ class AdminController extends Controller
 
     public function stocks(){
         $stocks=DB::table('stocks')->get();
-        return Response::json($stocks);
+        $tamps=DB::table('tamps')->get();
+        $alldata=array("stocks"=>$stocks,"tamps"=> $tamps);
+        return Response::json($alldata);
     }
 
     public function addForSale($id){
@@ -49,9 +51,8 @@ class AdminController extends Controller
         if($stock->quantity>=1){
 
             $tamp_data=DB::table('tamps')->where('stockid', $id)->first();
-
+            // dd($tamp_data);
             if(!$tamp_data){
-
                 $stock->quantity=$stock->quantity-1;
                 DB::table('stocks')->where('id', $id)->update(['quantity' => $stock->quantity]);
 
@@ -66,21 +67,40 @@ class AdminController extends Controller
                 $tamp_data['maxquantity']=$stock->quantity;
     
                 Tamp::create($tamp_data);
-                $tamp_all_data=DB::table('tamps')->get();
-                $stock_all_data=DB::table('stocks')->get();
+                $tamp_all_data=DB::table('tamps')->orderBy('id','ASC')->get();
+                $stock_all_data=DB::table('stocks')->orderBy('id','ASC')->get();
                 $alldata=array("stocks"=>$stock_all_data,"tamps"=> $tamp_all_data);
                 
                 return Response::json($alldata);
             }else{
                 $quantity=$tamp_data->quantity+1;
                 $maxquantity=$tamp_data->maxquantity-1;
-                DB::table('tamps')->where('id', $id)->update(['quantity' => $quantity,'maxquantity'=>$maxquantity]);
+                DB::table('tamps')->where('stockid', $id)->update(['quantity' => $quantity,'maxquantity'=>$maxquantity]);
                 DB::table('stocks')->where('id', $id)->update(['quantity' => $maxquantity]);
-                $tamp_all_data=DB::table('tamps')->get();
-                $stock_all_data=DB::table('stocks')->get();
+                $tamp_all_data=DB::table('tamps')->orderBy('id','ASC')->get();
+                $stock_all_data=DB::table('stocks')->orderBy('id','ASC')->get();
                 $alldata=array("stocks"=>$stock_all_data,"tamps"=> $tamp_all_data);
                 return Response::json($alldata);
             }
         }
+        $tamp_all_data=DB::table('tamps')->orderBy('id','ASC')->get();
+        $stock_all_data=DB::table('stocks')->orderBy('id','ASC')->get();
+        $alldata=array("stocks"=>$stock_all_data,"tamps"=> $tamp_all_data);
+        return Response::json($alldata);
+    }
+
+    public function removeFromTamp($id){
+        $tamp_data=DB::table('tamps')->where('stockid', $id)->first();
+
+        $stock=DB::table('stocks')->where('id', $id)->first();
+        $quantity=$stock->quantity+$tamp_data->quantity;
+        DB::table('stocks')->where('id', $id)->update(['quantity' => $quantity]);
+        DB::table('tamps')->where('stockid', $id)->delete();
+
+        $tamp_all_data=DB::table('tamps')->orderBy('id','ASC')->get();
+        $stock_all_data=DB::table('stocks')->orderBy('id','ASC')->get();
+        $alldata=array("stocks"=>$stock_all_data,"tamps"=> $tamp_all_data);
+        return Response::json($alldata);
+
     }
 }

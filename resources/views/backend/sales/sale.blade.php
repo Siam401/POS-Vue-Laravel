@@ -53,7 +53,7 @@
                 <div class="col-md-6">
                     <div class="panel panel-white basic-form-panel">
                         <div class="panel-body">
-                                <form method="POST" action="#" accept-charset="UTF-8" id="scan">
+                                {{-- <form method="POST" action="#" accept-charset="UTF-8" id="scan">
                                     <div class="row">
                                         <div class="col-md-12 col-lg-12">
                                             <div class="form-group">
@@ -65,7 +65,7 @@
                                         </div>
                                     </div>
                                     <input type="submit" style="display: none">
-                                    </form>
+                                    </form> --}}
              
                                     <div class="card" id="table-cart">
                                         <div class="card-content collapse show">
@@ -74,31 +74,22 @@
                                                     <thead>
                                                         <tr>
                                                             <th width="30%">Product</th>
-                                                            <th width="15%">Qty</th>
                                                             <th width="15%">Price</th>
+                                                            <th width="15%">Qty</th>
                                                             <th width="25">Total</th>
                                                             <th width="15%"></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="sale-cart">
-                                                        <?php $grandtotal = 0 ?>
-                                                        @foreach ($tamps as $tamp)
-                                                        <?php $grandtotal += $tamp->sellprice * $tamp->quantity ?>
-                                                            <tr>
-                                                                <td>{{ $tamp->name }}</td>
-                                                                <td>
-                                                                    <input type="number" min="1" autocomplete="off" size="3" max="{{ $tamp->maxquantity }}" name="qty" id="qty" value="{{ $tamp->quantity }}" style="text-align:center">
-                                                                </td>
-                                                                <td>{{ $tamp->sellprice }}</td>
-                                                                @php
-                                                                    $total=$tamp->quantity*$tamp->sellprice;
-                                                                @endphp
-                                                                <td>{{ $total }}</td>
-                                                                <td>
-                                                                    <a href="javascript:void(0)" id="cart-delete" data-id="a21ffd04a22e4dd8522d27e854aa2878" class="btn btn-outline-danger btn-sm "><i class="fa fa-trash"></i></a>
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
+                                                        <tr v-for="data in tamps">
+                                                            <td>@{{ data.name }}</td>
+                                                            <td>@{{ data.sellprice }}</td>
+                                                            <td>@{{ data.quantity }}</td>
+                                                            <td>@{{ data.sellprice*data.quantity }}</td>
+                                                            <td>
+                                                              <button v-on:click.prevent="removeProduct(data.stockid)" class="btn btn-danger">-</button>
+                                                            </td>
+                                                        </tr>
                                                     </tbody>
                                                 </table>
                                                 
@@ -108,7 +99,7 @@
                                                     <div class="col-sm-6 float-right">
                                                             <div class="input-group input-form-groups">
                                                                     <span class="input-group-addon" id="basic-addon1">Tk</span>
-                                                                    <input type="text" class="form-control" value="{{ $grandtotal }}" aria-describedby="basic-addon1" readonly>
+                                                                    <input type="text" class="form-control" value="" aria-describedby="basic-addon1" readonly>
                                                                 </div>
                                                     </div>
                                                     <br> <br>
@@ -165,25 +156,41 @@
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script>
-    const url = "http://localhost:8000/stocks";
+    const url1 = "http://localhost:8000/stocks";
     new Vue({
         el: '#app',
         data : {
             info: [],
+            tamps: [],
             search: '',
-            stockid: ''
+            stockid: '',
+            tempid: ''
         },
         methods : {
             addproduct(id) 
             {
                 this.stockid=id;
+                let url2 = "http://localhost:8000/stock/add/sale/"+id;
+                axios.get(url2).then(response => {
+                    this.info = response.data.stocks,
+                    this.tamps = response.data.tamps
+                })
+            },
+            removeProduct(id) 
+            {
+                this.tempid=id;
+                let url3 = "http://localhost:8000/stock/remove/sale/"+id;
+                axios.get(url3).then(response => {
+                    this.info = response.data.stocks,
+                    this.tamps = response.data.tamps
+                })
             }
         },
         mounted () {
-            axios.get(url).then(response => {
-                this.info = response.data
+            axios.get(url1).then(response => {
+                this.info = response.data.stocks,
+                this.tamps = response.data.tamps
             })
-            
         },
         computed: {
             stocks() {
