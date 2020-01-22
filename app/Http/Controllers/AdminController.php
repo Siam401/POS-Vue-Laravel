@@ -103,4 +103,24 @@ class AdminController extends Controller
         return Response::json($alldata);
 
     }
+
+    public function updateFromTamp(Request $request,$id){
+        
+        $data=$request->all();
+        $quantity=$data['qunatity'];
+        $stock=DB::table('stocks')->where('id', $id)->first();
+        $stockquantity=$stock->quantity;
+
+        if($quantity<=$stockquantity){
+            $stockquantity=$stockquantity-$quantity;
+            DB::table('stocks')->where('id', $id)->update(['quantity' => $stockquantity]);
+            DB::table('tamps')->where('stockid', $id)->update(['quantity' => $quantity,'maxquantity'=>$stockquantity]);
+        }
+
+        $tamp_all_data=DB::table('tamps')->orderBy('id','ASC')->get();
+        $stock_all_data=DB::table('stocks')->orderBy('id','ASC')->get();
+        $alldata=array("stocks"=>$stock_all_data,"tamps"=> $tamp_all_data);
+        return Response::json($alldata);
+
+    }
 }

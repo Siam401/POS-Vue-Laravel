@@ -84,8 +84,11 @@
                                                         <tr v-for="data in tamps">
                                                             <td>@{{ data.name }}</td>
                                                             <td>@{{ data.sellprice }}</td>
-                                                            <td>@{{ data.quantity }}</td>
-                                                            <td>@{{ data.sellprice*data.quantity }}</td>
+                                                            <td>
+                                                                <input type="number" min="0" v-model="data.quantity" v-on:change="update(data.stockid)" style="width:100%">
+                                                            </td>
+                                                            <td>
+                                                                @{{ data.sellprice*data.quantity }}</td>
                                                             <td>
                                                               <button v-on:click.prevent="removeProduct(data.stockid)" class="btn btn-danger">-</button>
                                                             </td>
@@ -164,7 +167,8 @@
             tamps: [],
             search: '',
             stockid: '',
-            tempid: ''
+            tempid: '',
+            updateQuantity: ''
         },
         methods : {
             addproduct(id) 
@@ -181,6 +185,15 @@
                 this.tempid=id;
                 let url3 = "http://localhost:8000/stock/remove/sale/"+id;
                 axios.get(url3).then(response => {
+                    this.info = response.data.stocks,
+                    this.tamps = response.data.tamps
+                })
+            },
+            update(id) 
+            {
+                alert(this.updateQuantity);
+                let url4 = "http://localhost:8000/stock/update/sale/"+id;
+                axios.put(url3).then(response => {
                     this.info = response.data.stocks,
                     this.tamps = response.data.tamps
                 })
