@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Input;
 use App\Category1;
 use App\Company1;
 use App\Stock;
@@ -38,8 +39,8 @@ class AdminController extends Controller
     }
 
     public function stocks(){
-        $stocks=DB::table('stocks')->get();
-        $tamps=DB::table('tamps')->get();
+        $stocks=DB::table('stocks')->orderBy('id','ASC')->get();
+        $tamps=DB::table('tamps')->orderBy('id','ASC')->get();
         $alldata=array("stocks"=>$stocks,"tamps"=> $tamps);
         return Response::json($alldata);
     }
@@ -104,13 +105,17 @@ class AdminController extends Controller
 
     }
 
-    public function updateFromTamp(Request $request,$id){
-        
-        $data=$request->all();
-        $quantity=$data['qunatity'];
+    public function updateFromTamp(Request $request, $id){
+
+        $quantity= $request->quantity;
+        $tamp=DB::table('tamps')->where('stockid', $id)->first();
         $stock=DB::table('stocks')->where('id', $id)->first();
         $stockquantity=$stock->quantity;
+        $tampquantity=$tamp->quantity;
+        $stockquantity+=$tampquantity;
+        // return Response::json($stock);
 
+        // dd($stockquantity);
         if($quantity<=$stockquantity){
             $stockquantity=$stockquantity-$quantity;
             DB::table('stocks')->where('id', $id)->update(['quantity' => $stockquantity]);

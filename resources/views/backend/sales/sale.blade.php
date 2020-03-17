@@ -85,7 +85,7 @@
                                                             <td>@{{ data.name }}</td>
                                                             <td>@{{ data.sellprice }}</td>
                                                             <td>
-                                                                <input type="number" min="0" v-model="data.quantity" v-on:change="update(data.stockid)" style="width:100%">
+                                                                <input type="number" min="0" v-model="data.quantity" v-on:change="update({event: $event, id: data.stockid})" style="width:100%">
                                                             </td>
                                                             <td>
                                                                 @{{ data.sellprice*data.quantity }}</td>
@@ -162,7 +162,8 @@
     const url1 = "http://localhost:8000/stocks";
     new Vue({
         el: '#app',
-        data : {
+        data : 
+        {
             info: [],
             tamps: [],
             search: '',
@@ -183,17 +184,16 @@
             removeProduct(id) 
             {
                 this.tempid=id;
-                let url3 = "http://localhost:8000/stock/remove/sale/"+id;
+                let url3 = "/stock/remove/sale/"+id;
                 axios.get(url3).then(response => {
                     this.info = response.data.stocks,
                     this.tamps = response.data.tamps
                 })
             },
-            update(id) 
+            update({event, id}) 
             {
-                alert(this.updateQuantity);
-                let url4 = "http://localhost:8000/stock/update/sale/"+id;
-                axios.put(url3).then(response => {
+                axios.put("/stock/update/sale/"+id, {quantity: event.target._value}).then(response => {
+                    // console.log(response)
                     this.info = response.data.stocks,
                     this.tamps = response.data.tamps
                 })

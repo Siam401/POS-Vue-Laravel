@@ -27,4 +27,4 @@ Route::get('/stock/add/sale/{id}', 'AdminController@addForSale')->name('admin.ad
 Route::get('/stock/remove/sale/{id}', 'AdminController@removeFromTamp')->name('admin.removeFromTamp');
 Route::put('/stock/update/sale/{id}', 'AdminController@updateFromTamp')->name('admin.updateFromTamp');
 //API
-Route::get('/stocks', 'AdminController@stocks')->name('all.stock');
+Route::get('/stocks', 'AdminController@stocks');
